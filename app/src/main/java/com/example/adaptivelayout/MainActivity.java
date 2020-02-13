@@ -2,17 +2,12 @@ package com.example.adaptivelayout;
 
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 public class MainActivity extends AppCompatActivity {
     private Button btnZero;
@@ -27,16 +22,15 @@ public class MainActivity extends AppCompatActivity {
     private Button btnNine;
     private Button btnPoint;
     private TextView txtOutput;
-    private String textBuffer;
+    private String textBuffer = "";
+
     View.OnClickListener onButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Button btn = (Button) v;
             String curBtn = btn.getText().toString();
 
-            if (TextUtils.isEmpty(txtOutput.getText())) {
-                textBuffer ="";
-            } else {
+            if (!TextUtils.isEmpty(txtOutput.getText())) {
                 textBuffer = txtOutput.getText().toString();
             }
 
@@ -47,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 textBuffer += curBtn;
             }
+
+            TextBuffer.text = textBuffer;
 
             txtOutput.setText(textBuffer);
 
@@ -87,6 +83,10 @@ public class MainActivity extends AppCompatActivity {
         btnEigth.setOnClickListener(onButtonClickListener);
         btnNine.setOnClickListener(onButtonClickListener);
         btnPoint.setOnClickListener(onButtonClickListener);
+
+        if (!TextBuffer.text.equals("")) {
+            txtOutput.setText(TextBuffer.text);
+        }
 
     }
 
