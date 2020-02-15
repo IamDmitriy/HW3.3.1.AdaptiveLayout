@@ -1,5 +1,6 @@
 package com.example.adaptivelayout;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -10,6 +11,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
+    private final String SP_FILE = "SharedPref";
+    private final String OUTPUT_TXT_KEY = "OUTPUT_TXT_KEY";
     private Button btnZero;
     private Button btnOne;
     private Button btnTwo;
@@ -21,9 +24,9 @@ public class MainActivity extends AppCompatActivity {
     private Button btnEigth;
     private Button btnNine;
     private Button btnPoint;
+    private Button btnC;
     private TextView txtOutput;
     private String textBuffer = "";
-
     View.OnClickListener onButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -42,22 +45,21 @@ public class MainActivity extends AppCompatActivity {
                 textBuffer += curBtn;
             }
 
-            TextBuffer.text = textBuffer;
-
             txtOutput.setText(textBuffer);
 
         }
     };
+    private SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initView();
+        init();
     }
 
-    private void initView() {
+    private void init() {
         btnZero = findViewById(R.id.btnZero);
         btnOne = findViewById(R.id.btnOne);
         btnTwo = findViewById(R.id.btnTwo);
@@ -69,8 +71,15 @@ public class MainActivity extends AppCompatActivity {
         btnEigth = findViewById(R.id.btnEight);
         btnNine = findViewById(R.id.btnNine);
         btnPoint = findViewById(R.id.btnPoint);
+        btnC = findViewById(R.id.btnC);
 
-        txtOutput = findViewById(R.id.txtOutput);
+        btnC.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                textBuffer = "";
+                txtOutput.setText(textBuffer);
+            }
+        });
 
         btnZero.setOnClickListener(onButtonClickListener);
         btnOne.setOnClickListener(onButtonClickListener);
@@ -84,10 +93,15 @@ public class MainActivity extends AppCompatActivity {
         btnNine.setOnClickListener(onButtonClickListener);
         btnPoint.setOnClickListener(onButtonClickListener);
 
-        if (!TextBuffer.text.equals("")) {
-            txtOutput.setText(TextBuffer.text);
-        }
-
+        txtOutput = findViewById(R.id.txtOutput);
+        sharedPref = getSharedPreferences(SP_FILE, MODE_PRIVATE);
+        textBuffer = sharedPref.getString(OUTPUT_TXT_KEY, textBuffer);
+        txtOutput.setText(textBuffer);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sharedPref.edit().putString(OUTPUT_TXT_KEY, textBuffer).commit();
+    }
 }
