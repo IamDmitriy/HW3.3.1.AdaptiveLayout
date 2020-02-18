@@ -2,17 +2,18 @@ package com.example.adaptivelayout;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
-    private final String SP_FILE = "SharedPref";
-    private final String OUTPUT_TXT_KEY = "OUTPUT_TXT_KEY";
+
     private Button btnZero;
     private Button btnOne;
     private Button btnTwo;
@@ -49,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
-    private SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,14 +94,21 @@ public class MainActivity extends AppCompatActivity {
         btnPoint.setOnClickListener(onButtonClickListener);
 
         txtOutput = findViewById(R.id.txtOutput);
-        sharedPref = getSharedPreferences(SP_FILE, MODE_PRIVATE);
-        textBuffer = sharedPref.getString(OUTPUT_TXT_KEY, textBuffer);
         txtOutput.setText(textBuffer);
     }
 
+
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        sharedPref.edit().putString(OUTPUT_TXT_KEY, textBuffer).commit();
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("txtBuffer", textBuffer);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        textBuffer = savedInstanceState.getString("txtBuffer");
+        txtOutput.setText(textBuffer); //Без этого не работает, т.к. собитие генерируется
+        // после onCreate - onStart
     }
 }
